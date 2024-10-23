@@ -1,18 +1,13 @@
 import sys
 import pandas as pd
-from PyQt5.QtWidgets import QApplication, QMainWindow, QComboBox, QPushButton, QLabel, QVBoxLayout, QWidget
-from openpyxl import Workbook
-from PyQt5.QtWidgets import QFileDialog, QMessageBox
-import sys
-import pandas as pd
-from PyQt5.QtWidgets import QApplication, QMainWindow, QComboBox, QPushButton, QLabel, QVBoxLayout, QWidget, QFileDialog, QMessageBox
+from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QWidget, QFileDialog, QMessageBox
 from openpyxl import Workbook
 
 class VenuePlanner(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle('Venue Planner System')
+        self.setWindowTitle('Venue Planner')
         self.setGeometry(100, 100, 400, 400)
 
         # Initialize UI elements
@@ -22,20 +17,11 @@ class VenuePlanner(QMainWindow):
         self.cambridge_data = None
         self.pearson_data = None
         self.subject_list = None
-        self.time_data = None
         self.school_info = None
-        self.exam_start_time = None
-        self.add_materials = None
 
     def initUI(self):
         # Create layout
         layout = QVBoxLayout()
-
-        # Zone Dropdown (disabled until all data is loaded)
-        self.zone_label = QLabel("Select Zone:", self)
-        self.zone_dropdown = QComboBox(self)
-        self.zone_dropdown.addItems(["Zone 1", "Zone 2", "Zone 3", "Zone 4"])
-        self.zone_dropdown.setEnabled(False)
 
         # Buttons for loading data
         self.load_cambridge_button = QPushButton('Load Cambridge Int. Data', self)
@@ -49,21 +35,9 @@ class VenuePlanner(QMainWindow):
         self.load_subject_list_button.clicked.connect(self.load_subject_list)
         self.load_subject_list_button.setEnabled(False)
 
-        self.load_time_data_button = QPushButton('Load Time Data', self)
-        self.load_time_data_button.clicked.connect(self.load_time_data)
-        self.load_time_data_button.setEnabled(False)
-
         self.load_school_info_button = QPushButton('Load School Info', self)
         self.load_school_info_button.clicked.connect(self.load_school_info)
         self.load_school_info_button.setEnabled(False)
-
-        self.load_exam_start_time_button = QPushButton('Load Exam Start Time', self)
-        self.load_exam_start_time_button.clicked.connect(self.load_exam_start_time)
-        self.load_exam_start_time_button.setEnabled(False)
-
-        self.load_add_materials_button = QPushButton('Load Additional Materials', self)
-        self.load_add_materials_button.clicked.connect(self.load_add_materials)
-        self.load_add_materials_button.setEnabled(False)
 
         # Submit Button (disabled until all data is loaded)
         self.submit_button = QPushButton('Submit', self)
@@ -71,15 +45,10 @@ class VenuePlanner(QMainWindow):
         self.submit_button.setEnabled(False)
 
         # Add widgets to the layout
-        layout.addWidget(self.zone_label)
-        layout.addWidget(self.zone_dropdown)
         layout.addWidget(self.load_cambridge_button)
         layout.addWidget(self.load_pearson_button)
         layout.addWidget(self.load_subject_list_button)
-        layout.addWidget(self.load_time_data_button)
         layout.addWidget(self.load_school_info_button)
-        layout.addWidget(self.load_exam_start_time_button)
-        layout.addWidget(self.load_add_materials_button)
         layout.addWidget(self.submit_button)
 
         # Set layout
@@ -91,6 +60,7 @@ class VenuePlanner(QMainWindow):
         cambridge_file, _ = QFileDialog.getOpenFileName(self, "Select Cambridge Int. Excel File", "", "Excel Files (*.xlsx *.xls)")
         if cambridge_file:
             self.cambridge_data = pd.read_excel(cambridge_file)
+            print("Cambridge Data Columns:", self.cambridge_data.columns)  # Debugging: Check column names
             QMessageBox.information(self, "Loaded", "Cambridge Int. data loaded successfully.")
             self.load_pearson_button.setEnabled(True)
 
@@ -98,6 +68,7 @@ class VenuePlanner(QMainWindow):
         pearson_file, _ = QFileDialog.getOpenFileName(self, "Select Pearson Edx. Excel File", "", "Excel Files (*.xlsx *.xls)")
         if pearson_file:
             self.pearson_data = pd.read_excel(pearson_file)
+            print("Pearson Data Columns:", self.pearson_data.columns)  # Debugging: Check column names
             QMessageBox.information(self, "Loaded", "Pearson Edx. data loaded successfully.")
             self.load_subject_list_button.setEnabled(True)
 
@@ -105,66 +76,80 @@ class VenuePlanner(QMainWindow):
         subject_list_file, _ = QFileDialog.getOpenFileName(self, "Select Subject List Excel File", "", "Excel Files (*.xlsx *.xls)")
         if subject_list_file:
             self.subject_list = pd.read_excel(subject_list_file)
+            print("Subject List Columns:", self.subject_list.columns)  # Debugging: Check column names
             QMessageBox.information(self, "Loaded", "Subject List loaded successfully.")
-            self.load_time_data_button.setEnabled(True)
-
-    def load_time_data(self):
-        time_data_file, _ = QFileDialog.getOpenFileName(self, "Select Time Data Excel File", "", "Excel Files (*.xlsx *.xls)")
-        if time_data_file:
-            self.time_data = pd.read_excel(time_data_file)
-            QMessageBox.information(self, "Loaded", "Time Data loaded successfully.")
             self.load_school_info_button.setEnabled(True)
 
     def load_school_info(self):
         school_info_file, _ = QFileDialog.getOpenFileName(self, "Select School Info Excel File", "", "Excel Files (*.xlsx *.xls)")
         if school_info_file:
             self.school_info = pd.read_excel(school_info_file)
+            print("School Info Columns:", self.school_info.columns)  # Debugging: Check column names
             QMessageBox.information(self, "Loaded", "School Info loaded successfully.")
-            self.load_exam_start_time_button.setEnabled(True)
-
-    def load_exam_start_time(self):
-        exam_start_time_file, _ = QFileDialog.getOpenFileName(self, "Select Exam Start Time Excel File", "", "Excel Files (*.xlsx *.xls)")
-        if exam_start_time_file:
-            self.exam_start_time = pd.read_excel(exam_start_time_file)
-            QMessageBox.information(self, "Loaded", "Exam Start Time loaded successfully.")
-            self.load_add_materials_button.setEnabled(True)
-
-    def load_add_materials(self):
-        add_materials_file, _ = QFileDialog.getOpenFileName(self, "Select Additional Materials Excel File", "", "Excel Files (*.xlsx *.xls)")
-        if add_materials_file:
-            self.add_materials = pd.read_excel(add_materials_file)
-            QMessageBox.information(self, "Loaded", "Additional Materials loaded successfully.")
-            self.zone_dropdown.setEnabled(True)
             self.submit_button.setEnabled(True)
 
     def create_venue_plan(self):
-        # Generate a venue plan based on the loaded data and selected zone
-        selected_zone = self.zone_dropdown.currentText()
-        print(f"Creating venue plan for {selected_zone}")
+        # Ensure necessary columns exist as expected
+        required_cambridge_cols = ['Subject/Component Code', 'Centre Number', 'Candidate Number', 'Date of Birth', 'Gender', 'Mobile Phone', 'Email Address']
+        required_pearson_cols = ['Subject/Component Code', 'Centre Number', 'Candidate Number', 'Date of Birth', 'Gender', 'Mobile Phone', 'Email Address']
+        required_subject_cols = ['Subject/Component Code', 'Type']
+        required_school_cols = ['Centre Number', 'School Name', 'Centre type', 'Zone', 'Location']
 
-        # Example merging data to create a venue plan
-        merged_data = pd.merge(self.subject_list, self.school_info, how="left", on="School")
-        merged_data['Start Time'] = self.exam_start_time['Start Time']
+        # Convert 'Centre Number', 'Mobile Phone', and 'Email Address' to string in both DataFrames
+        self.cambridge_data['Centre Number'] = self.cambridge_data['Centre Number'].astype(str)
+        self.cambridge_data['Mobile Phone'] = self.cambridge_data['Mobile Phone'].astype(str)
+        self.cambridge_data['Email Address'] = self.cambridge_data['Email Address'].astype(str)
 
-        # Output file creation using openpyxl
+        self.pearson_data['Centre Number'] = self.pearson_data['Centre Number'].astype(str)
+        self.pearson_data['Mobile Phone'] = self.pearson_data['Mobile Phone'].astype(str)
+        self.pearson_data['Email Address'] = self.pearson_data['Email Address'].astype(str)
+
+        # Convert date columns to datetime format
+        self.cambridge_data['Date of Birth'] = pd.to_datetime(self.cambridge_data['Date of Birth'], errors='coerce')
+        self.pearson_data['Date of Birth'] = pd.to_datetime(self.pearson_data['Date of Birth'], errors='coerce')
+
+        # Merging Cambridge and Pearson data on the common columns
+        merged_data = pd.merge(
+            self.cambridge_data[required_cambridge_cols],
+            self.pearson_data[required_pearson_cols],
+            on=["Subject/Component Code", "Centre Number", "Candidate Number", "Date of Birth", "Gender", "Mobile Phone", "Email Address"],
+            how="outer"
+        )
+
+        # Merging with subject list to add 'Type'
+        merged_data = pd.merge(merged_data, self.subject_list[required_subject_cols], on="Subject/Component Code", how="left")
+
+        # Check if required columns are present in school info before merging
+        if not all(col in self.school_info.columns for col in required_school_cols):
+            missing_cols = [col for col in required_school_cols if col not in self.school_info.columns]
+            QMessageBox.warning(self, "Error", f"Missing columns in School Info data: {', '.join(missing_cols)}")
+            return
+
+        # Merging with school info to add 'School Name', 'Centre Type', 'Zone', 'Location'
+        merged_data = pd.merge(merged_data, self.school_info[required_school_cols], on="Centre Number", how="left")
+
+        # Sort data by Centre Number and Subject/Component Code
+        sorted_data = merged_data.sort_values(by=["Centre Number", "Subject/Component Code"])
+
+        # Create Excel output using openpyxl
         wb = Workbook()
         ws = wb.active
-        ws.title = "Venue Plan System"
+        ws.title = "Venue Planner System"
 
         # Write headers
-        headers = ["School", "Subject", "Zone", "Start Time", "Additional Materials"]
-        ws.append(headers)
+        ws.append(sorted_data.columns.tolist())
 
-        # Add filtered data into the workbook
-        for index, row in merged_data.iterrows():
-            ws.append([row['School'], row['Subject'], selected_zone, row['Start Time'], "Materials Needed"])
+        # Write data
+        for _, row in sorted_data.iterrows():
+            ws.append(row.tolist())
 
         # Save workbook
-        output_file = f"Venue_Plan_{selected_zone}.xlsx"
+        output_file = "Venue_Plan.xlsx"
         wb.save(output_file)
 
         QMessageBox.information(self, "Success", f"Venue plan saved as {output_file}")
         print(f"Venue plan created and saved as {output_file}")
+
 
 # Main application execution
 if __name__ == '__main__':
@@ -172,3 +157,4 @@ if __name__ == '__main__':
     window = VenuePlanner()
     window.show()
     sys.exit(app.exec_())
+
