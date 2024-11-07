@@ -1,1 +1,1 @@
-![Venue Plan E-R Diagram - Page 1 Venue Plan E-R Diagram (1)](https://github.com/user-attachments/assets/abf32484-0263-4974-94aa-b82d0741e6bf)
+![Big Picture of Venue Plan (1)](https://github.com/user-attachments/assets/2923f026-1b10-403a-ba1a-8420e51705c0)
